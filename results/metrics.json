@@ -1,0 +1,86 @@
+{
+  "environment": "local CPU; E4M3 quantize/dequantize simulation with FP32 matrix operations",
+  "parameters": 30080,
+  "steps_per_run": 240,
+  "task": "synthetic modular arithmetic next-token prediction; not natural language",
+  "results": {
+    "fp32": {
+      "training_wall_seconds": 0.7408930839737877,
+      "selected_step": 220,
+      "validation_cross_entropy": 0.11859076470136642,
+      "test": {
+        "cross_entropy": 0.11729203164577484,
+        "perplexity": 1.1244477560761508,
+        "token_accuracy": 0.953125
+      },
+      "profile": {
+        "median_batch_inference_ms": 0.4000409971922636,
+        "batch_size": 16,
+        "top_cpu_operators": [
+          {
+            "operator": "aten::_scaled_dot_product_flash_attention_for_cpu",
+            "self_cpu_us": 149.8209999999999
+          },
+          {
+            "operator": "aten::index_select",
+            "self_cpu_us": 139.3610000000001
+          },
+          {
+            "operator": "aten::addmm",
+            "self_cpu_us": 67.41000000000054
+          },
+          {
+            "operator": "aten::silu",
+            "self_cpu_us": 49.912000000000035
+          },
+          {
+            "operator": "aten::copy_",
+            "self_cpu_us": 30.455000000000155
+          }
+        ]
+      }
+    },
+    "fp8_emulated": {
+      "training_wall_seconds": 1.1292888750322163,
+      "selected_step": 220,
+      "validation_cross_entropy": 0.11793920397758484,
+      "test": {
+        "cross_entropy": 0.11781273782253265,
+        "perplexity": 1.1250334154331707,
+        "token_accuracy": 0.953125
+      },
+      "profile": {
+        "median_batch_inference_ms": 1.2817910173907876,
+        "batch_size": 16,
+        "top_cpu_operators": [
+          {
+            "operator": "aten::copy_",
+            "self_cpu_us": 240.19299999999942
+          },
+          {
+            "operator": "aten::_scaled_dot_product_flash_attention_for_cpu",
+            "self_cpu_us": 142.2680000000003
+          },
+          {
+            "operator": "aten::all",
+            "self_cpu_us": 128.38799999999938
+          },
+          {
+            "operator": "aten::ne",
+            "self_cpu_us": 81.67400000000006
+          },
+          {
+            "operator": "aten::eq",
+            "self_cpu_us": 79.3869999999998
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "Not native FP8 training, Ascend/NPU, CUDA, or an accelerator benchmark.",
+    "Master weights, gradients, optimizer states, attention and accumulation remain FP32.",
+    "Small synthetic task has overlapping finite patterns across seeds; not held-out-pattern generalization.",
+    "One seed; CPU profiling adds overhead. No real Llama/DeepSeek checkpoint, MoE, RL or multimodal training."
+  ]
+}
